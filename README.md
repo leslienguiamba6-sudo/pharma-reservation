@@ -8,11 +8,11 @@ Le projet évolue par étapes ; la version 1 est volontairement minimale.
 ## Objectif du projet
 
 Apprendre à livrer un logiciel de façon automatisée et sécurisée et aussi être davantage autonome. L’application est le prétexte, le support sur lequel je m’entraîne pour l'atteindre. But :
-* tester le code automatiquement ;
-* l’empaqueter dans un conteneur Docker ;
-* le faire passer dans un pipeline qui s’exécute à chaque modification ;
-* y ajouter des contrôles de sécurité (secrets, dépendances, image) ;
-* comprendre ce que je fais, pour pouvoir l’expliquer.
+- tester le code automatiquement ;
+- l’empaqueter dans un conteneur Docker ;
+- le faire passer dans un pipeline qui s’exécute à chaque modification ;
+- y ajouter des contrôles de sécurité (secrets, dépendances, image) ;
+- comprendre ce que je fais, pour pouvoir l’expliquer.
 
 
 ## Ce que l'application fera (version 1)
