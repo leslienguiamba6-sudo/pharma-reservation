@@ -18,3 +18,12 @@ Mon aide-mémoire pour démarrer un projet proprement.
 - `ssh -T git@github.com` : ajout du serveur github à la liste des hôtes de ssh
 - `ssh-keygen -R githuh.com` : suppression du faux serveur à la liste des hôtes ssh
 - `ssh-keygen -p -f ~/.ssh/id_ed25519` : création d'une nouvelle phrase secrète
+
+
+## Python
+- Au début de chaque projet Python, je crée un environnement virtuel dans le dossier du projet : `python3 -m venv .venv`, puis je l'active avec `source .venv/bin/activate` (le prompt affiche `(.venv)`).
+- Je ne lance jamais `pip install` sans `(.venv)` actif, sinon le paquet va dans le système (dans ce cas, les projets se mélangent, je risque de perturber les outils du système, et mon requirements-dev.txt n’est plus fiable.).
+- J'enregistre les paquets avec `pip freeze > requirements-dev.txt` (ce fichier contiendra la liste de tous les paquets installés dans mon venv), et je les réinstalle avec `pip install -r requirements-dev.txt`.
+- `.venv` n'est pas dans Git (le `.gitignore` Python l'exclut) : il se recrée à partir de `requirements-dev.txt`. 
+
+> Dans mon cas, `python3 -m venv` a échoué avec "ensurepip is not available", j’ai dû d'abord installer le module qui permet de créer des environnements virtuels avec `sudo apt install python3-venv`.
