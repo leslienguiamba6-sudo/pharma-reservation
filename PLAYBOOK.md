@@ -31,3 +31,27 @@ Mon aide-mémoire pour démarrer un projet proprement.
 > Dans mon cas, `python3 -m venv` a échoué avec "ensurepip is not available", j’ai dû d'abord installer le module qui permet de créer des environnements virtuels avec `sudo apt install python3-venv`.
 
 > Il ne faut pas confondre `apt` qui la commande qui permet d'installer des logiciel dans le système grâce à sudo et `pip` qui est la commande qui permt d'installer des paquets python dans l'environnement virtuel (Venv)
+
+## API et tests
+- L'API reçoit une demande HTTP, appelle la logique (service concerné) et renvoie une réponse (que la logique lui aura donné) avec un code de statut.
+- Je lance l'API avec `uvicorn app.main:app --port 8000` : ce sera la commande du conteneur.
+- `/sante` répond « ok » : c'est la route que Docker et Kubernetes interrogent pour savoir si l'application vit.
+- Codes : `2xx` ça a marché, `4xx` le client s'est trompé, `5xx` le serveur a un problème. L'API traduit les exceptions Python en codes HTTP.
+- `curl -i <adresse>` : tester qu'un service répond, et voir le code.
+- `/docs` expose toutes les routes : à désactiver ou protéger en production.
+- Les tests doivent être indépendants et reproductibles, sinon ils cassent le pipeline.
+
+## Docker
+Un conteneur vient vide : il lui faut un environnement (un interpréteur) pour exécuter l’application. Il est identique partout où on le lance : sur ma machine, dans un pipeline, sur un serveur.
+
+- Dockerfile : C’est la recette (le fichier), mais c’est `docker build -t pharma-reservation:dev .` qui construit l’image à partir de lui, et c’est `docker run` qui lance un conteneur à partir de l’image.
+```
+Dockerfile -> docker build -> image -> docker run -> conteneur
+```
+- .dockerignore : la liste des fichiers que Docker ne doit pas recevoir. Les avantages : la rapidité de construction de l'image, la légèreté de l'image et aussi un projet sécurisé (les secrets ne risquent pas de s’y glisser par erreur)
+- Sans nom ni étiquette (-t), l’image est difficile à identifier ; sans étiquette, Docker met latest, qui ne dit pas quelle version se cache derrière.
+- Lancer l'application : `docker run --rm -p 8000:8000 pharma-reservation:dev`. L'option `-p 8000:8000` sert à ouvrir une porte qui fera communiquer le port 8000 de ma machine et le port 8000 du conteneur car le conteneur est isolé et personne ne peut lui parler de l'extérieur.
+- Dans le `CMD`, j'écris `--host 0.0.0.0` parce que l'extérieur du conteneur doit communiquer avec lui (`127.0.0.1` dans un conteneur désigne l'intérieur du conteneur et si uvicorn n'écoute que là, curl ne pourra l'atteindre).
+- Dans le Dockerfile, je copie d'abord `requirements.txt` et j'installe les paquets, puis je copie le code, parce que Docker garde en mémoire le résultat de chaque étape (le cache). Donc un changement de code ne refait pas l'installations des paquets.
+- Seul `requirements.txt` entre dans l'image, donc `pytest` n'y est pas.
+- Avant de choisir une image de base, je vérifie s'il y a un préfixe devant le nom de l'image (le nom, devant les deux-points). L'image officielle n'a aucun préfixe.
