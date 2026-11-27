@@ -55,3 +55,11 @@ Dockerfile -> docker build -> image -> docker run -> conteneur
 - Dans le Dockerfile, je copie d'abord `requirements.txt` et j'installe les paquets, puis je copie le code, parce que Docker garde en mémoire le résultat de chaque étape (le cache). Donc un changement de code ne refait pas l'installations des paquets.
 - Seul `requirements.txt` entre dans l'image, donc `pytest` n'y est pas.
 - Avant de choisir une image de base, je vérifie s'il y a un préfixe devant le nom de l'image (le nom, devant les deux-points). L'image officielle n'a aucun préfixe.
+
+## Pipeline CI
+Un pipeline c'est une suite d'étapes qui s'exécute suite au lancement d'un `push` ou d'un `pull_request` sur une machine vide chez GitHub (machine virtuelle).
+
+- `ci.yml` est le fichier qui me permet de créer mon pipeline (ma recette) et l'exécution de ce fichier est mon pipeline
+- Lors de l'écriture du fichier ci.yml il n'y a jamais de tabulations juste des espaces, on met deux espaces par niveaux, un tiret par élément listé et des valeurs de version entre guillemets pour éviter qu'ils ne soient confondues avec des nombres ordinaires (sans guillemets, 3.10 est lu comme 3.1)
+- Certains mots sont imposés par GitHub directement (`pull_request`, `name`, etc) ou par les actions (`actions/setup-python` qui impose `python-version`) et pour éviter les erreurs ils sont à copier depuis la documentation
+- Il est important de vérifier que le pipeline réagit bien face aux erreurs 
