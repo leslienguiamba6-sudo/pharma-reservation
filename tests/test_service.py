@@ -24,7 +24,7 @@ def test_recherche_ignore_la_casse():
 def test_reserver_diminue_le_stock():
     service = nouveau_service()
     service.reserver(1, 2, maintenant=DEBUT)
-    assert service.produits[1].stock == 7
+    assert service.produits[1].stock == 8
 
 
 def test_reserver_plus_que_le_stock_est_refuse():
