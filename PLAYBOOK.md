@@ -57,9 +57,15 @@ Dockerfile -> docker build -> image -> docker run -> conteneur
 - Avant de choisir une image de base, je vérifie s'il y a un préfixe devant le nom de l'image (le nom, devant les deux-points). L'image officielle n'a aucun préfixe.
 
 ## Pipeline CI
-Un pipeline c'est une suite d'étapes qui s'exécute suite au lancement d'un `push` ou d'un `pull_request` sur une machine vide chez GitHub (machine virtuelle).
+Un pipeline c'est une suite d'étapes qui s'exécute à chaque `push` ou `pull_request` sur une machine vide chez GitHub (machine virtuelle).
 
 - `ci.yml` est le fichier qui me permet de créer mon pipeline (ma recette) et l'exécution de ce fichier est mon pipeline
 - Lors de l'écriture du fichier ci.yml il n'y a jamais de tabulations juste des espaces, on met deux espaces par niveaux, un tiret par élément listé et des valeurs de version entre guillemets pour éviter qu'ils ne soient confondues avec des nombres ordinaires (sans guillemets, 3.10 est lu comme 3.1)
 - Certains mots sont imposés par GitHub directement (`pull_request`, `name`, etc) ou par les actions (`actions/setup-python` qui impose `python-version`) et pour éviter les erreurs ils sont à copier depuis la documentation
-- Il est important de vérifier que le pipeline réagit bien face aux erreurs 
+- Il est important de vérifier que le pipeline réagit bien face aux erreurs. un pipeline qui n’a jamais échoué n’a rien prouvé ; j’ai donc cassé un test volontairement (croix rouge), puis j’ai réparé avec git revert (coche verte).
+- `actions/checkout` télécharge le code depuis GitHub : sans lui, la machine est vide.
+- Le pipeline fait `docker build` mais pas `docker run`.
+- Après un échec, GitHub arrête les étapes suivantes.
+
+## Pytest
+- Je lance mes tests avec `python -m pytest`, pas `pytest` seul : `python -m` met la racine du projet dans les chemins de recherche de Python (c'est-à-dire pharma-reservation, donc il trouve app). J'ai testé : `pytest` seul donne `No module named 'app'` (il ajoute plutôt le dossier `tests/` uniquement et ce dossier ne contient pas app).
